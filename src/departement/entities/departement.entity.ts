@@ -5,7 +5,7 @@ export class Departement {
     @PrimaryGeneratedColumn()
     id: number
 
-    @Column()
+    @Column({ unique: true })
     code: string
 
     @Column()

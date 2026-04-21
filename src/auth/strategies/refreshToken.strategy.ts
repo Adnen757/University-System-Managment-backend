@@ -2,13 +2,14 @@ import { PassportStrategy } from "@nestjs/passport";
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { Request } from 'express';
 import { Injectable } from "@nestjs/common";
+import { ConfigService } from "@nestjs/config";
 
 @Injectable()
 export class refreshTokenStrategy extends PassportStrategy(Strategy, 'jwt-refresh',) {
-    constructor() {
-        const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
+    constructor(private configService: ConfigService) {
+        const JWT_REFRESH_SECRET = configService.get<string>('JWT_REFRESH_SECRET');
         if(!JWT_REFRESH_SECRET){
-            throw new Error("JWT_REFRESH_SECRET not d=found in env") ;
+            throw new Error("JWT_REFRESH_SECRET not found in env") ;
         }
         super({
             jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),

@@ -6,6 +6,10 @@ export class CreateProfesseurDto extends CreateUserDto {
     @IsString()
     ChargeHoraireSemestrielle: string;
 
+    @IsOptional()
+    @IsString()
+    matiere?: string;
+
     @IsNotEmpty()
     @IsNumber()
     departementId: number;

@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { DepartementModule } from './departement/departement.module';
+import { DatabaseModule } from './database/database.module';
 import { EtudiantModule } from './etudiant/etudiant.module';
 import { ProfesseurModule } from './professeur/professeur.module';
 import { ChefDepartementModule } from './chef-departement/chef-departement.module';
@@ -21,7 +22,7 @@ import { MessageModule } from './message/message.module';
 import { AdministrateurModule } from './administrateur/administrateur.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
-import { MailerModule } from '@nestjs-modules/mailer/dist/mailer.module';
+import { MailerModule } from '@nestjs-modules/mailer';
 import { SpecialiteModule } from './specialite/specialite.module';
 import { EvaluationModule } from './evaluation/evaluation.module';
 import { InscriptionModule } from './inscription/inscription.module';
@@ -65,7 +66,7 @@ import { ChatbotModule } from './chatbot/chatbot.module';
       },
     }),
   
-  ConfigModule.forRoot({isGlobal:true}), UserModule, DepartementModule, EtudiantModule, ProfesseurModule, ChefDepartementModule, AnnonceModule, SalleModule, SeanceModule, AnneeUniversitaireModule, SemestreModule, PresenceModule, JustificatifAbsenceModule, MatiereModule, NoteModule, RessourcPedagogiquesModule, MessageModule, AdministrateurModule, AuthModule,SpecialiteModule ,EvaluationModule, InscriptionModule, ClasseModule, ChatbotModule],
+  ConfigModule.forRoot({isGlobal:true}), DatabaseModule, UserModule, DepartementModule, EtudiantModule, ProfesseurModule, ChefDepartementModule, AnnonceModule, SalleModule, SeanceModule, AnneeUniversitaireModule, SemestreModule, PresenceModule, JustificatifAbsenceModule, MatiereModule, NoteModule, RessourcPedagogiquesModule, MessageModule, AdministrateurModule, AuthModule,SpecialiteModule ,EvaluationModule, InscriptionModule, ClasseModule, ChatbotModule],
   controllers: [AppController],
   providers: [AppService],
 

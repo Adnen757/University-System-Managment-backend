@@ -1,114 +1,56 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpStatus, UseGuards } from '@nestjs/common';
 import { DepartementService } from './departement.service';
 import { CreateDepartementDto } from './dto/create-departement.dto';
 import { UpdateDepartementDto } from './dto/update-departement.dto';
-import { response } from 'express';
+import { AccessTokenGuard } from 'src/common/guards/accessToken.guard';
 
 @Controller('departement')
+@UseGuards(AccessTokenGuard)
 export class DepartementController {
   constructor(private readonly departementService: DepartementService) {}
 
-
-
   @Post()
-  async create(@Body() createDepartementDto: CreateDepartementDto ,@Res() response) {
-    try {
-         const newdepartement=await this.departementService.create(createDepartementDto)
-         return response.status(HttpStatus.CREATED).json({
-           message:"departement create avec succes",newdepartement
-         })
-       } catch (error) {
-        return response.status(HttpStatus.BAD_REQUEST).json({
-   statusCode : 400,
-   message :"error lors de la creation de departement "+error.message
-       })}
-
-
-
+  async create(@Body() createDepartementDto: CreateDepartementDto) {
+    const newdepartement = await this.departementService.create(createDepartementDto);
+    return {
+      message: "departement créé avec succès",
+      data: newdepartement,
+    };
   }
-
-
-
-
 
   @Get()
-  async findAll(@Res() response) {
-   try {
-      const departement=await this.departementService.findAll()
-      return response.status(HttpStatus.OK).json({
-        message:"this all departement ",departement
-      })
-      
-    } catch (error) {
-      return response.status(HttpStatus.BAD_REQUEST).json({
-statusCode : 400,
-message :"error data not found"+error.message
-    })
-    }
+  async findAll() {
+    const departement = await this.departementService.findAll();
+    return {
+      message: "liste des départements",
+      data: departement,
+    };
   }
-
-
-
-
 
   @Get(':id')
-  async findOne(@Param('id') id: number,@Res() response) {
-   try {
-    const departement=await this.departementService.findOne(id)
-    return response.status(HttpStatus.OK).json({
-        message:"this all departement ",departement
-      })
-    
-   } catch (error) {
-    return response.status(HttpStatus.BAD_REQUEST).json({
-statusCode : 400,
-message :"departement not found"+error.message
-    })
-   }
+  async findOne(@Param('id') id: number) {
+    const departement = await this.departementService.findOne(+id);
+    return {
+      message: "département trouvé",
+      data: departement,
+    };
   }
-
-
-
-
-
-
-
-
-
-
-
 
   @Patch(':id')
-  async update(@Param('id') id: number, @Body() updateDepartementDto: UpdateDepartementDto,@Res() response) {
-     try {
-    const departement=await this.departementService.update(id,updateDepartementDto)
-    return response.status(HttpStatus.OK).json({
-        message:" departement de id "+id+" update avec succsefly",departement
-      })
-    
-   } catch (error) {
-    return response.status(HttpStatus.BAD_REQUEST).json({
-statusCode : 400,
-message :"departement de id "+id+" not found "+error.message
-    })
-   }
+  async update(@Param('id') id: number, @Body() updateDepartementDto: UpdateDepartementDto) {
+    const departement = await this.departementService.update(+id, updateDepartementDto);
+    return {
+      message: "département mis à jour",
+      data: departement,
+    };
   }
-
-
 
   @Delete(':id')
-  async remove(@Param('id') id: number,@Res() response) {
-    try {
-    const departement=await this.departementService.remove(id)
-    return response.status(HttpStatus.OK).json({
-        message:" departement de id "+id+" remove avec succsefly",departement
-      })
-    
-   } catch (error) {
-    return response.status(HttpStatus.BAD_REQUEST).json({
-statusCode : 400,
-message :"departement de id "+id+" not found "+error.message
-    })
-   }
+  async remove(@Param('id') id: number) {
+    await this.departementService.remove(+id);
+    return {
+      message: "département supprimé",
+    };
   }
 }
+

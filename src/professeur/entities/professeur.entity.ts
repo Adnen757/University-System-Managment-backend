@@ -9,6 +9,9 @@ export class Professeur extends User {
     @Column()
     ChargeHoraireSemestrielle: string
 
+    @Column({ nullable: true })
+    matiere: string
+
     @ManyToOne("Departement", "professeurs", { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'departementId' })
     departement: any;

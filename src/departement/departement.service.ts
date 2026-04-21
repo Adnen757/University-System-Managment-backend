@@ -2,7 +2,6 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateDepartementDto } from './dto/create-departement.dto';
 import { UpdateDepartementDto } from './dto/update-departement.dto';
 import { Departement } from './entities/departement.entity';
-import { promises } from 'dns';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 
