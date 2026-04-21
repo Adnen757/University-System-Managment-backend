@@ -34,7 +34,7 @@ import { ChatbotModule } from './chatbot/chatbot.module';
     host: "localhost",
     port: 5432,
     username: "postgres",
-    password: "1234",
+    password: "12345",
     database:"projet1",
     autoLoadEntities: true,
     entities: [__dirname + "/**/*.entity{.ts,.js}"
