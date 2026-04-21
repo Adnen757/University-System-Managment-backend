@@ -1,4 +1,3 @@
-import { Etudiant } from "src/etudiant/entities/etudiant.entity";
 import { Evaluation } from "src/evaluation/entities/evaluation.entity";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
@@ -16,9 +15,9 @@ export class Note {
     @Column()
     validee: boolean
 
-    @ManyToOne(() => Etudiant, (etudiant) => etudiant.notes, { onDelete: 'CASCADE' })
+    @ManyToOne("Etudiant", "notes", { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'etudiantId' })
-    etudiant: Etudiant
+    etudiant: any
 
     @Column({ nullable: true })
     etudiantId: number

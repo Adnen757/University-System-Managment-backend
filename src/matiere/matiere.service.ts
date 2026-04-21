@@ -38,6 +38,9 @@ constructor(
 
 async  findAll():Promise<Matiere[]> {
    const matieres=await this.matiereRepository.find()
+   if(matieres.length===0){
+      return []
+   }
    return matieres
   }
 

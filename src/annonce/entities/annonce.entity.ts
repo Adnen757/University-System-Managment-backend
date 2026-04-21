@@ -1,6 +1,4 @@
-import { IsNumber, IsOptional } from "class-validator";
-import { User } from "src/user/entities/user.entity";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 export enum annonceType{
         ETUDIANT="ETUDIANT",
     CHEF_DEPARTEMENT="CHEF_DEPARTEMENT",
@@ -22,7 +20,10 @@ export class Annonce {
 @Column({type:"enum", enum:annonceType})
  cibleRole:annonceType
 @Column()
- cibleDepartement:string
+cibleDepartement:string
+
+@Column({ nullable: true })
+departementId: number
 
 
 

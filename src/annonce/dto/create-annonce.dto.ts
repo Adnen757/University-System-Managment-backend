@@ -32,4 +32,8 @@ cibleDepartement:string
 @IsNumber()
 @IsOptional()
 user:number
+
+@IsNumber()
+@IsOptional()
+departementId:number
 }

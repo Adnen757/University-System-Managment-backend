@@ -5,12 +5,14 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Professeur } from './entities/professeur.entity';
 import { DeepPartial, Repository } from 'typeorm';
 import { Departement } from 'src/departement/entities/departement.entity';
+import { Matiere } from 'src/matiere/entities/matiere.entity';
 
 @Injectable()
 export class ProfesseurService {
   constructor(
     @InjectRepository(Professeur) private professeurRepository: Repository<Professeur>,
-    @InjectRepository(Departement) private departementRepository: Repository<Departement>
+    @InjectRepository(Departement) private departementRepository: Repository<Departement>,
+    @InjectRepository(Matiere) private matiereRepository: Repository<Matiere>
   ) { }
 
   async create(createProfesseurDto: CreateProfesseurDto): Promise<Professeur> {
@@ -18,13 +20,22 @@ export class ProfesseurService {
     if (!departement) {
       throw new NotFoundException('departement not found')
     }
-    const { departementId, ...userData } = createProfesseurDto;
+    const { departementId, matiereIds, ...userData } = createProfesseurDto;
     const newprofesseur = await this.professeurRepository.create({ 
       ...userData, 
       departementId, 
       role: "professeur" 
     })
-    return this.professeurRepository.save(newprofesseur)
+    const savedProfesseur = await this.professeurRepository.save(newprofesseur)
+    
+    // Gérer les matières associées
+    if (matiereIds && Array.isArray(matiereIds) && matiereIds.length > 0) {
+      const matieres = await this.matiereRepository.findByIds(matiereIds);
+      savedProfesseur.matieres = matieres;
+      await this.professeurRepository.save(savedProfesseur);
+    }
+    
+    return savedProfesseur
   }
 
 
@@ -55,15 +66,22 @@ export class ProfesseurService {
 
 
   async update(id: number, updateProfesseurDto: UpdateProfesseurDto): Promise<Professeur> {
-    const professeur = await this.professeurRepository.findOneBy({ id })
+    const professeur = await this.professeurRepository.findOne({ where: { id }, relations: ['matieres'] })
     if (!professeur) {
       throw new NotFoundException("professeur not found")
     }
-    const updateprofesseur = await this.professeurRepository.preload({ ...updateProfesseurDto as DeepPartial<Professeur>, id })
+    const { matiereIds, ...updateData } = updateProfesseurDto;
+    const updateprofesseur = await this.professeurRepository.preload({ ...updateData as DeepPartial<Professeur>, id })
     if (!updateprofesseur) {
       throw new NotFoundException(`can not update a #${id} professeur`)
-
     }
+    
+    // Gérer les matières associées
+    if (matiereIds && Array.isArray(matiereIds)) {
+      const matieres = await this.matiereRepository.findByIds(matiereIds);
+      updateprofesseur.matieres = matieres;
+    }
+    
     return this.professeurRepository.save(updateprofesseur)
   }
 

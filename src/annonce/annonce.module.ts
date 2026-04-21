@@ -3,10 +3,9 @@ import { AnnonceService } from './annonce.service';
 import { AnnonceController } from './annonce.controller';
 import { Annonce } from './entities/annonce.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from 'src/user/entities/user.entity';
 
 @Module({
-    imports:[TypeOrmModule.forFeature([Annonce , User])],
+    imports:[TypeOrmModule.forFeature([Annonce])],
   controllers: [AnnonceController],
   providers: [AnnonceService],
 })

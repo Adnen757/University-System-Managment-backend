@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsNotEmpty, IsNumber, IsString, IsArray, IsOptional } from "class-validator";
 import { CreateUserDto } from "src/user/dto/create-user.dto";
 
 export class CreateProfesseurDto extends CreateUserDto {
@@ -9,4 +9,9 @@ export class CreateProfesseurDto extends CreateUserDto {
     @IsNotEmpty()
     @IsNumber()
     departementId: number;
+
+    @IsArray()
+    @IsNumber({}, { each: true })
+    @IsOptional()
+    matiereIds?: number[];
 }

@@ -2,7 +2,6 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateMessageDto } from './dto/create-message.dto';
 import { UpdateMessageDto } from './dto/update-message.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Annonce } from 'src/annonce/entities/annonce.entity';
 import { DeepPartial, Repository } from 'typeorm';
 import { Message } from './entities/message.entity';
 import { User } from 'src/user/entities/user.entity';

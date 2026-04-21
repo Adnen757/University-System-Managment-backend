@@ -14,12 +14,12 @@ export class Departement {
     @Column()
     description: string
 
-    @OneToMany("Specialite", "departement", { cascade: true })
+    @OneToMany("Specialite", "departement", { cascade: true, onDelete: 'CASCADE' })
     specialites: any[]
 
     @OneToOne("ChefDepartement", "departement", { cascade: true })
     chefDepartement: any;
-    @OneToMany("Professeur", "departement", { cascade: true })
+    @OneToMany("Professeur", "departement", { cascade: true, onDelete: 'CASCADE' })
     professeurs: any[]
 
     @OneToMany("Etudiant", "departement", { cascade: true })

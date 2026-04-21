@@ -31,7 +31,7 @@ export class DepartementService {
  async findAll():Promise<Departement[]> {
     const departement=await this.departementRepository.find()
     if(departement.length===0){
-      throw new NotFoundException("data not found")
+      return []
     }
     return departement
 
