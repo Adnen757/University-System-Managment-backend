@@ -39,11 +39,10 @@ export class ClasseService {
 
 
 
- async findAll():Promise<Classe[]> {
+ async findAll(departementId?: number):Promise<Classe[]> {
+    // TODO: Réactiver le filtrage après synchronisation de la base de données
+    // const where = departementId ? { departementId } : {};
     const classes = await this.classeRepository.find({ relations: ['departement'] });
-    if (classes.length === 0) {
-      throw new NotFoundException("data not found");
-    }
     return classes;
   }
 
@@ -97,10 +96,19 @@ export class ClasseService {
 
 
  async remove(id: number) {
-     const classe =await this.classeRepository.findOneBy({id})
+     const classe =await this.classeRepository.findOne({
+      where: { id },
+      relations: ['inscriptions']
+    });
 if(!classe){
   throw new NotFoundException("classe not found")
- 
+}
+// Supprimer d'abord les inscriptions associées si elles existent
+if (classe.inscriptions && classe.inscriptions.length > 0) {
+  await this.classeRepository.createQueryBuilder()
+    .relation(Classe, 'inscriptions')
+    .of(classe)
+    .remove(classe.inscriptions);
 }
  await this.classeRepository.delete(id)
  return id

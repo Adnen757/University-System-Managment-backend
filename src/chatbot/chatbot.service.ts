@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { spawn } from 'child_process';
 import { join } from 'path';
+
 import * as fs from 'fs';
 
 interface FAQItem {
@@ -11,6 +12,10 @@ interface FAQItem {
 
 interface FAQData {
   faq: FAQItem[];
+}
+
+interface FastAPIResponse {
+  answer: string;
 }
 
 @Injectable()
@@ -152,5 +157,22 @@ export class ChatbotService {
 
     // Réponse par défaut si rien n'est trouvé
     return "Désolé, je n'ai pas trouvé de réponse précise à votre question. Voici ce que je peux vous aider à faire:\n\n• Inscription et documents\n• Consulter votre emploi du temps\n• Voir vos notes et absences\n• Questions sur les examens\n\nVeuillez reformuler votre question ou contacter l'administration pour plus d'aide.";
+  }
+
+  async askAIProfesseur(question: string): Promise<string> {
+    try {
+      const axios = (await import('axios')).default;
+      const response = await axios.post('http://localhost:8000/ask', {
+        question: question
+      }, {
+        timeout: 30000
+      });
+      
+      const data = response.data as FastAPIResponse;
+      return data?.answer || "Désolé, je n'ai pas pu générer de réponse.";
+    } catch (error) {
+      console.error('Erreur FastAPI chatbot professeur:', error);
+      return "Désolé, une erreur s'est produite lors du traitement de votre question. Veuillez réessayer.";
+    }
   }
 }

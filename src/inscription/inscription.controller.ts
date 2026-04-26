@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpStatus, UseInterceptors, UploadedFiles } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpStatus, UseInterceptors, UploadedFiles, Query } from '@nestjs/common';
 import { InscriptionService } from './inscription.service';
 import { CreateInscriptionDto } from './dto/create-inscription.dto';
 import { UpdateInscriptionDto } from './dto/update-inscription.dto';
@@ -46,13 +46,13 @@ createInscriptionDto.photos = photos ? photos.map(p => p.filename) : []
 
 
   @Get()
- async findAll(@Res()response) {
+ async findAll(@Res()response, @Query('classeId') classeId?: number) {
       try {
-      const inscription=await this.inscriptionService.findAll()
+      const inscription=await this.inscriptionService.findAll(classeId)
       return response.status(HttpStatus.OK).json({
         message:"this all inscription",inscription
       })
-      
+
     } catch (error) {
       return response.status(HttpStatus.BAD_REQUEST).json({
 statusCode : 400,

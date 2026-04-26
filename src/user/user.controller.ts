@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpStatus, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpStatus, Put, ValidationPipe } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -13,14 +13,17 @@ export class UserController {
   @Post()
   async create(@Body() createUserDto: CreateUserDto,@Res()response) {
     try {
+      console.log('Creating user with DTO:', createUserDto);
       const newuser=await this.userService.create(createUserDto)
       return response.status(HttpStatus.CREATED).json({
         message:"user create avec succes",newuser
       })
     } catch (error) {
+      console.error('Error creating user:', error);
      return response.status(HttpStatus.BAD_REQUEST).json({
 statusCode : 400,
-message :"error lors de la creation de l utulisateur"+error.message
+message :"error lors de la creation de l utulisateur"+error.message,
+details: error
     })}
   }
 

@@ -5,7 +5,6 @@ export class CreateUserDto {
    @IsNotEmpty()
     fullname:string
 
-  
 
 
     @IsEmail()
@@ -22,12 +21,14 @@ export class CreateUserDto {
     @IsOptional()
     role:string
 
+    // TODO: Réactiver après synchronisation de la base de données
+     @IsOptional()
+    @IsNumber()
+    departementId?: number
 
-    
-
-@IsOptional()
-@IsString()
-refreshToken?: string | null
+    @IsOptional()
+    @IsString()
+    refreshToken?: string | null
 
 
 }

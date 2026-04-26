@@ -11,6 +11,9 @@ export class Classe {
     @Column()
     niveau: string
 
+    @Column({ nullable: true })
+    departementId: number
+
     @ManyToOne("Departement", "classes", { onDelete: "CASCADE" })
     @JoinColumn({ name: "departement_id" })
     departement: any

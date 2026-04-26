@@ -33,6 +33,9 @@ password:string
 @Column()
 role:string
 
+@Column({ nullable: true })
+departementId: number
+
 @OneToMany(() => Inscription, (inscription) => inscription.user)
 inscriptions: Inscription[]
 

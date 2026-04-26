@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpStatus, Query } from '@nestjs/common';
 import { ClasseService } from './classe.service';
 import { CreateClasseDto } from './dto/create-classe.dto';
 import { UpdateClasseDto } from './dto/update-classe.dto';
@@ -30,13 +30,13 @@ async  create(@Body() createClasseDto: CreateClasseDto ,@Res() response) {
 
 
   @Get()
- async findAll(@Res() response) {
+ async findAll(@Res() response, @Query('departementId') departementId?: number) {
      try {
-      const classe=await this.classeService.findAll()
+      const classe=await this.classeService.findAll(departementId)
       return response.status(HttpStatus.OK).json({
         message:"this all classe ",classe
       })
-      
+
     } catch (error) {
       return response.status(HttpStatus.BAD_REQUEST).json({
 statusCode : 400,
@@ -93,15 +93,18 @@ message :"classe de id "+id+" not found "+error.message
   @Delete(':id')
  async remove(@Param('id') id: number, @Res() response) {
      try {
+      console.log('Deleting classe with id:', id);
     const classe=await this.classeService.remove(id)
     return response.status(HttpStatus.OK).json({
         message:" classe de id "+id+" remove avec succsefly",classe
       })
-    
+
    } catch (error) {
+    console.error('Error deleting classe:', error);
     return response.status(HttpStatus.BAD_REQUEST).json({
 statusCode : 400,
-message :"classe de id "+id+" not found "+error.message
+message :"classe de id "+id+" not found "+error.message,
+details: error
     })
    }
   }

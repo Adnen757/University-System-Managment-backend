@@ -14,9 +14,9 @@ export class InscriptionService {
   // Mapping des départements vers les préfixes de classes
   private readonly departementPrefixes: { [key: string]: string } = {
     'Informatique': 'TI',
-    'Génie Mécanique': 'GE',
-    'Génie Électrique': 'ZU',
-    'Génie des Procédés': 'ER'
+    'Génie Mécanique': 'GM',
+    'Génie Électrique': 'GE',
+    'Génie des Procédés': 'GP'
   };
 
   constructor(
@@ -112,11 +112,9 @@ export class InscriptionService {
 
 
 
- async findAll(): Promise<Inscription[]> {
-    const inscriptions = await this.inscriptionRepository.find({ relations: ['departement', 'classe'] });
-    if (inscriptions.length === 0) {
-      throw new NotFoundException("data not found");
-    }
+ async findAll(classeId?: number): Promise<Inscription[]> {
+    const where = classeId ? { classe: { id: classeId } } : {};
+    const inscriptions = await this.inscriptionRepository.find({ where, relations: ['departement', 'classe', 'user'] });
     return inscriptions;
   }
 
