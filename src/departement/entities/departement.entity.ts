@@ -1,4 +1,5 @@
 import { Column, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Salle } from "src/salle/entities/salle.entity";
 
 @Entity("Departement")
 export class Departement {
@@ -33,4 +34,7 @@ export class Departement {
 
     @OneToMany("Matiere", "departement", { cascade: true })
     matieres: any[]
+
+    @OneToMany(() => Salle, (salle) => salle.departement, { cascade: true })
+    salles: any[]
 }

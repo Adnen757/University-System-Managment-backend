@@ -1,19 +1,19 @@
 import { Seance } from "src/seance/entities/seance.entity";
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, JoinColumn } from "typeorm";
+import { Departement } from "src/departement/entities/departement.entity";
+
 @Entity("salle")
 export class Salle {
-@PrimaryGeneratedColumn()
- id:number
+  @PrimaryGeneratedColumn()
+  id: number
 
- @Column()
- code:string
-    @Column()   
-    capacite:number
-    @Column()
-    batiement:string
-    @Column()
-    equipement:string
+  @Column()
+  nom: string
 
+  @Column()
+  capacite: number
 
-
+  @ManyToOne(() => Departement, (departement) => departement.salles, { onDelete: 'CASCADE' })
+  @JoinColumn({ name: "departement_id" })
+  departement: Departement
 }

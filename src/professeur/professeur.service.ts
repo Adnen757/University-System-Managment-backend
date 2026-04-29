@@ -41,7 +41,7 @@ export class ProfesseurService {
 
 
   async findAll(): Promise<Professeur[]> {
-    const professeur = await this.professeurRepository.find()
+    const professeur = await this.professeurRepository.find({ relations: ['matieres'] })
     if (professeur.length === 0) {
       throw new NotFoundException("data not found")
     }

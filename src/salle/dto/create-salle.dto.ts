@@ -1,25 +1,18 @@
-import { IsNotEmpty, IsNumber, IsString } from "class-validator";
-import { Salle } from "../entities/salle.entity";
+import { IsNotEmpty, IsNumber, IsString, IsOptional } from "class-validator";
+import { Type } from "class-transformer";
 
 export class CreateSalleDto {
-@IsNotEmpty()
-@IsString()
-code:string
+  @IsNotEmpty()
+  @IsString()
+  nom: string
 
-@IsNotEmpty()
-@IsNumber()
-capacite:number
- 
-@IsNotEmpty()
-@IsString()
-batiement:string
+  @IsNotEmpty()
+  @IsNumber()
+  @Type(() => Number)
+  capacite: number
 
-
-@IsNotEmpty()
-@IsString()
-equipement:string
-
-@IsNotEmpty()
-seance:number
-
+  @IsOptional()
+  @IsNumber()
+  @Type(() => Number)
+  departementId?: number
 }

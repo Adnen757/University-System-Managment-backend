@@ -1,8 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { spawn } from 'child_process';
-import { join } from 'path';
-
 import * as fs from 'fs';
+import { join } from 'path';
+import axios from 'axios';
+
+
+interface FastAPIResponse {
+  answer: string;
+}
+
 
 interface FAQItem {
   id: number;
@@ -160,19 +166,17 @@ export class ChatbotService {
   }
 
   async askAIProfesseur(question: string): Promise<string> {
-    try {
-      const axios = (await import('axios')).default;
-      const response = await axios.post('http://localhost:8000/ask', {
-        question: question
-      }, {
-        timeout: 30000
-      });
-      
-      const data = response.data as FastAPIResponse;
-      return data?.answer || "Désolé, je n'ai pas pu générer de réponse.";
-    } catch (error) {
-      console.error('Erreur FastAPI chatbot professeur:', error);
-      return "Désolé, une erreur s'est produite lors du traitement de votre question. Veuillez réessayer.";
-    }
+  try {
+    const response = await axios.post<FastAPIResponse>(
+      'http://127.0.0.1:8000/ask',
+      { question }
+    );
+
+    return response.data.answer;
+
+  } catch (error) {
+    console.error('Erreur FastAPI:', error);
+    return "Erreur lors de la communication avec l'IA";
   }
+}
 }

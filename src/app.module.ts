@@ -28,6 +28,7 @@ import { EvaluationModule } from './evaluation/evaluation.module';
 import { InscriptionModule } from './inscription/inscription.module';
 import { ClasseModule } from './classe/classe.module';
 import { ChatbotModule } from './chatbot/chatbot.module';
+import { EmploiDuTempsModule } from './emploi-du-temps/emploi-du-temps.module';
 @Module({
   imports: [TypeOrmModule.forRoot({
     type: "postgres",
@@ -66,7 +67,7 @@ import { ChatbotModule } from './chatbot/chatbot.module';
       },
     }),
   
-  ConfigModule.forRoot({isGlobal:true}), DatabaseModule, UserModule, DepartementModule, EtudiantModule, ProfesseurModule, ChefDepartementModule, AnnonceModule, SalleModule, SeanceModule, AnneeUniversitaireModule, SemestreModule, PresenceModule, JustificatifAbsenceModule, MatiereModule, NoteModule, RessourcPedagogiquesModule, MessageModule, AdministrateurModule, AuthModule,SpecialiteModule ,EvaluationModule, InscriptionModule, ClasseModule, ChatbotModule],
+  ConfigModule.forRoot({isGlobal:true}), DatabaseModule, UserModule, DepartementModule, EtudiantModule, ProfesseurModule, ChefDepartementModule, AnnonceModule, SalleModule, SeanceModule, AnneeUniversitaireModule, SemestreModule, PresenceModule, JustificatifAbsenceModule, MatiereModule, NoteModule, RessourcPedagogiquesModule, MessageModule, AdministrateurModule, AuthModule,SpecialiteModule ,EvaluationModule, InscriptionModule, ClasseModule, ChatbotModule, EmploiDuTempsModule],
   controllers: [AppController],
   providers: [AppService],
 

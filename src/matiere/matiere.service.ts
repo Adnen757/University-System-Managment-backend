@@ -36,11 +36,10 @@ constructor(
 
 
 
-async  findAll():Promise<Matiere[]> {
-   const matieres=await this.matiereRepository.find({ relations: ['departement'] })
-   if(matieres.length===0){
-      return []
-   }
+async  findAll(departementId?: number):Promise<Matiere[]> {
+   const deptId = departementId ? Number(departementId) : undefined;
+   const where = deptId ? { departement: { id: deptId } } : {};
+   const matieres=await this.matiereRepository.find({ where, relations: ['departement'] })
    return matieres
   }
 

@@ -40,9 +40,8 @@ export class ClasseService {
 
 
  async findAll(departementId?: number):Promise<Classe[]> {
-    // TODO: Réactiver le filtrage après synchronisation de la base de données
-    // const where = departementId ? { departementId } : {};
-    const classes = await this.classeRepository.find({ relations: ['departement'] });
+    const where = departementId ? { departement: { id: departementId } } : {};
+    const classes = await this.classeRepository.find({ where, relations: ['departement'] });
     return classes;
   }
 

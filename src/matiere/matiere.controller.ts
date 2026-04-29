@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpStatus, Query } from '@nestjs/common';
 import { MatiereService } from './matiere.service';
 import { CreateMatiereDto } from './dto/create-matiere.dto';
 import { UpdateMatiereDto } from './dto/update-matiere.dto';
@@ -28,9 +28,9 @@ async  create(@Body() createMatiereDto: CreateMatiereDto ,@Res()response) {
 
 
   @Get()
-async  findAll(@Res()response) {
+async  findAll(@Res()response, @Query('departementId') departementId?: number) {
       try {
-      const matieres=await this.matiereService.findAll()
+      const matieres=await this.matiereService.findAll(departementId)
       return response.status(HttpStatus.OK).json({
         message:"this all matieres",matieres
       })

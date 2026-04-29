@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpStatus, Query } from '@nestjs/common';
 import { SalleService } from './salle.service';
 import { CreateSalleDto } from './dto/create-salle.dto';
 import { UpdateSalleDto } from './dto/update-salle.dto';
@@ -30,9 +30,9 @@ async  create(@Body() createSalleDto: CreateSalleDto ,@Res()response) {
 
 
   @Get()
- async findAll(@Res() response) {
+ async findAll(@Res() response, @Query('departementId') departementId?: number) {
         try {
-      const salle=await this.salleService.findAll()
+      const salle=await this.salleService.findAll(departementId)
       return response.status(HttpStatus.OK).json({
         message:"this all salle",salle
       })

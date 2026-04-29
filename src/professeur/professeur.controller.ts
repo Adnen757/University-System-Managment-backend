@@ -1,8 +1,7 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Res, HttpStatus, NotFoundException, ParseIntPipe } from '@nestjs/common';
 import { ProfesseurService } from './professeur.service';
 import { CreateProfesseurDto } from './dto/create-professeur.dto';
 import { UpdateProfesseurDto } from './dto/update-professeur.dto';
-import { response } from 'express';
 
 @Controller('professeur')
 export class ProfesseurController {
@@ -19,10 +18,13 @@ export class ProfesseurController {
            message:"professeur create avec succes",newprofesseur
          })
        } catch (error) {
-        return response.status(HttpStatus.BAD_REQUEST).json({
-   statusCode : 400,
-   message :"error lors de la creation de professeur "+error.message
-       })}   }
+        const status = error instanceof NotFoundException ? HttpStatus.NOT_FOUND : HttpStatus.BAD_REQUEST;
+        return response.status(status).json({
+          statusCode: status,
+          message: error.message || 'Erreur lors de la création du professeur'
+        });
+      }
+    }
 
 
 
@@ -38,18 +40,20 @@ export class ProfesseurController {
       })
       
     } catch (error) {
-      return response.status(HttpStatus.BAD_REQUEST).json({
-statusCode : 400,
-message :"error data not found"+error.message
-    })
-    }   }
+      const status = error instanceof NotFoundException ? HttpStatus.NOT_FOUND : HttpStatus.BAD_REQUEST;
+      return response.status(status).json({
+        statusCode: status,
+        message: error.message || 'Erreur lors de la récupération des professeurs'
+      });
+    }
+  }
 
 
 
 
 
   @Get(':id')
- async findOne(@Param('id') id: number,@Res() response) {
+ async findOne(@Param('id', ParseIntPipe) id: number, @Res() response) {
  try {
     const professeur=await this.professeurService.findOne(id)
     return response.status(HttpStatus.OK).json({
@@ -57,18 +61,20 @@ message :"error data not found"+error.message
       })
     
    } catch (error) {
-    return response.status(HttpStatus.BAD_REQUEST).json({
-statusCode : 400,
-message :"professeur  not found"+error.message
-    })
-   }  }
+    const status = error instanceof NotFoundException ? HttpStatus.NOT_FOUND : HttpStatus.BAD_REQUEST;
+    return response.status(status).json({
+      statusCode: status,
+      message: error.message || 'Professeur non trouvé'
+    });
+  }
+}
 
 
 
 
 
   @Patch(':id')
- async update(@Param('id') id: number, @Body() updateProfesseurDto: UpdateProfesseurDto,@Res() response) {
+ async update(@Param('id', ParseIntPipe) id: number, @Body() updateProfesseurDto: UpdateProfesseurDto, @Res() response) {
   try {
     const professeur=await this.professeurService.update(id,updateProfesseurDto)
     return response.status(HttpStatus.OK).json({
@@ -76,18 +82,20 @@ message :"professeur  not found"+error.message
       })
     
    } catch (error) {
-    return response.status(HttpStatus.BAD_REQUEST).json({
-statusCode : 400,
-message :"professeur not found"+error.message
-    })
-   }  }
+    const status = error instanceof NotFoundException ? HttpStatus.NOT_FOUND : HttpStatus.BAD_REQUEST;
+    return response.status(status).json({
+      statusCode: status,
+      message: error.message || 'Professeur non trouvé'
+    });
+  }
+}
 
 
 
 
 
   @Delete(':id')
- async remove(@Param('id') id: number,@Res() response) {
+ async remove(@Param('id', ParseIntPipe) id: number, @Res() response) {
      try {
     const professeur=await this.professeurService.remove(id)
     return response.status(HttpStatus.OK).json({
@@ -95,9 +103,11 @@ message :"professeur not found"+error.message
       })
     
    } catch (error) {
-    return response.status(HttpStatus.BAD_REQUEST).json({
-statusCode : 400,
-message :"professeur not found"+error.message
-    })
-   }  }
+    const status = error instanceof NotFoundException ? HttpStatus.NOT_FOUND : HttpStatus.BAD_REQUEST;
+    return response.status(status).json({
+      statusCode: status,
+      message: error.message || 'Professeur non trouvé'
+    });
+  }
+}
 }

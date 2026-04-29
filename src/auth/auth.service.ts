@@ -27,7 +27,10 @@ export class AuthService {
         throw new BadRequestException('Cet email est déjà utilisé');
       }
     } catch (error) {
-      // Si l'utilisateur n'existe pas, continuez
+      // Si l'utilisateur n'existe pas (NotFoundException), continuer
+      if (!(error instanceof NotFoundException)) {
+        throw error; // Propager les autres erreurs
+      }
     }
 
     // Créer le nouvel utilisateur (le mot de passe sera hashé par @BeforeInsert dans l'entité)
