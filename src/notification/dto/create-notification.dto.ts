@@ -14,7 +14,8 @@ export class CreateNotificationDto {
   type: NotificationType;
 
   @IsBoolean()
-  lu: boolean;
+  @IsOptional()
+  lu?: boolean;
   @IsNumber()
   @IsOptional()
   user:number;

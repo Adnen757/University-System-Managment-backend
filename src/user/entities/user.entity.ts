@@ -3,6 +3,8 @@ import * as argon2 from 'argon2'
 import { Inscription } from "../../inscription/entities/inscription.entity";
 import { ChefDepartement } from "src/chef-departement/entities/chef-departement.entity";
 import { Matiere } from "src/matiere/entities/matiere.entity";
+import { Message } from "src/message/entities/message.entity";
+import { Notification } from "src/notification/entities/notification.entity";
 @Entity("user")
 @TableInheritance({column:{type:"varchar", name:"role"}})
 
@@ -39,8 +41,17 @@ departementId: number
 @OneToMany(() => Inscription, (inscription) => inscription.user)
 inscriptions: Inscription[]
 
+@OneToMany(() => Notification, (notification) => notification.user)
+notifications: Notification[]
+
 @ManyToMany(() => Matiere, (matiere) => matiere.professeurs)
 matieres: Matiere[]
+
+@OneToMany(() => Message, (message) => message.sender)
+sentMessages: Message[]
+
+@OneToMany(() => Message, (message) => message.receiver)
+receivedMessages: Message[]
 
 
 

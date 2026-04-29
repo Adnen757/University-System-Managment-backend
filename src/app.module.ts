@@ -28,14 +28,22 @@ import { EvaluationModule } from './evaluation/evaluation.module';
 import { InscriptionModule } from './inscription/inscription.module';
 import { ClasseModule } from './classe/classe.module';
 import { ChatbotModule } from './chatbot/chatbot.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
+
 @Module({
-  imports: [TypeOrmModule.forRoot({
+  imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'stockage'),
+      serveRoot: '/stockage',
+    }),
+    TypeOrmModule.forRoot({
     type: "postgres",
-    host: "localhost",
-    port: 5432,
+    host: process.env.DB_HOST || "localhost",
+    port: parseInt(process.env.DB_PORT) || 5432,
     username: "postgres",
-    password: "1234",
-    database:"projet1",
+    password: "12345",
+    database: "project1",
     autoLoadEntities: true,
     entities: [__dirname + "/**/*.entity{.ts,.js}"
 

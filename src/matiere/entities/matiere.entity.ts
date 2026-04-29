@@ -3,6 +3,7 @@ import { RessourcPedagogique } from "src/ressourc-pedagogiques/entities/ressourc
 import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, ManyToMany, JoinTable } from "typeorm";
 import { Departement } from "src/departement/entities/departement.entity";
 import { User } from "src/user/entities/user.entity";
+import { Classe } from "src/classe/entities/classe.entity";
 
 @Entity("Matiere")
 export class Matiere {
@@ -27,6 +28,10 @@ export class Matiere {
      @ManyToMany(() => User, (professeur) => professeur.matieres)
      @JoinTable()
      professeurs: User[]
+
+     @ManyToMany(() => Classe, (classe) => classe.matieres)
+     @JoinTable()
+     classes: Classe[]
 
      @OneToMany(() => Evaluation, (evaluation) => evaluation.matiere, { cascade: true })
      evaluations: Evaluation[]

@@ -25,10 +25,13 @@ export class Notification {
     enum: NotificationType,
   })
   type: NotificationType;
-  @Column()
+
+  @Column({ default: false })
   lu: boolean;
 
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  date: Date;
 
-@JoinColumn({name:"user"})
+  @ManyToOne(() => User, (user) => user.notifications, { onDelete: 'CASCADE' })
   user: User;
 }

@@ -8,40 +8,43 @@ import { User } from 'src/user/entities/user.entity';
 
 @Injectable()
 export class MessageService {
+  constructor(
+    @InjectRepository(Message) private messageRepository: Repository<Message>,
+    @InjectRepository(User) private userRepository: Repository<User>
+  ) { }
 
-constructor(
-   @InjectRepository(Message) private messageRepository:Repository<Message>,
-     @InjectRepository(User) private userRepository:Repository<User>
+  async create(createMessageDto: CreateMessageDto): Promise<Message> {
+    const sender = await this.userRepository.findOneBy({ id: createMessageDto.senderId });
+    const receiver = await this.userRepository.findOneBy({ id: createMessageDto.receiverId });
 
-  ){
-
-  }
-
-
- async create(createMessageDto: CreateMessageDto):Promise<Message> {
-
-const user = await this.userRepository.findOne({where:{id:createMessageDto.user}, relations:["message"]})
-    if(!user){
-      throw new NotFoundException("user not found")
-
+    if (!sender || !receiver) {
+      throw new NotFoundException("Sender or receiver not found");
     }
 
+    const newMessage = this.messageRepository.create({
+      contenu: createMessageDto.contenu,
+      sender,
+      receiver,
+      dateEnvoi: createMessageDto.dateEnvoi || new Date(),
+      lu: createMessageDto.lu || false
+    });
 
-
-      const newmessage =await this.messageRepository.create({...createMessageDto ,})
-   return this.messageRepository.save(newmessage)
+    return this.messageRepository.save(newMessage);
   }
 
+  async findConversation(userId1: number, userId2: number): Promise<Message[]> {
+    return this.messageRepository.find({
+      where: [
+        { sender: { id: userId1 }, receiver: { id: userId2 } },
+        { sender: { id: userId2 }, receiver: { id: userId1 } }
+      ],
+      order: { dateEnvoi: 'ASC' },
+      relations: ['sender', 'receiver']
+    });
+  }
 
-
-
-
- async findAll():Promise<Message[]> {
-     const messages=await this.messageRepository.find()
-                     if(messages.length===0){
-                       throw new NotFoundException("data not found")
-                     }
-                     return messages
+  async findAll(): Promise<Message[]> {
+    return this.messageRepository.find({ relations: ['sender', 'receiver'] });
   }
 
 

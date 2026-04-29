@@ -38,13 +38,15 @@ return user
 
 
 
-  async findOne(id: number) :Promise<User> {
-
-const user =await this.userRepository.findOneBy({id})
-if(!user){
-  throw new NotFoundException("user not found")
-}
-return user
+  async findOne(id: number): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: { id },
+      relations: ['inscriptions', 'inscriptions.classe', 'inscriptions.departement']
+    })
+    if (!user) {
+      throw new NotFoundException("user not found")
+    }
+    return user
   }
 
 

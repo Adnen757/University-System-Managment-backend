@@ -41,7 +41,39 @@ message :"error data not found"+error.message
 
 
 
- @Get(':id')
+ @Get('user/:userId')
+  async findByUser(@Param('userId') userId: number, @Res() response) {
+    try {
+      const notifications = await this.notificationService.findByUser(userId);
+      return response.status(HttpStatus.OK).json({
+        message: "User notifications",
+        notifications
+      });
+    } catch (error) {
+      return response.status(HttpStatus.BAD_REQUEST).json({
+        statusCode: 400,
+        message: "Error fetching notifications: " + error.message
+      });
+    }
+  }
+
+  @Patch(':id/read')
+  async markAsRead(@Param('id') id: number, @Res() response) {
+    try {
+      const notification = await this.notificationService.markAsRead(id);
+      return response.status(HttpStatus.OK).json({
+        message: "Notification marked as read",
+        notification
+      });
+    } catch (error) {
+      return response.status(HttpStatus.BAD_REQUEST).json({
+        statusCode: 400,
+        message: "Error marking as read: " + error.message
+      });
+    }
+  }
+
+  @Get(':id')
    async findOne(@Param('id') id: number ,@Res() response) {
   try {
     const notification=await this.notificationService.findOne(id)

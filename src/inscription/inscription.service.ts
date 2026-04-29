@@ -13,6 +13,7 @@ export class InscriptionService {
 
   // Mapping des départements vers les préfixes de classes
   private readonly departementPrefixes: { [key: string]: string } = {
+    'informatique': 'TI',
     'Informatique': 'TI',
     'Génie Mécanique': 'GM',
     'Génie Électrique': 'GE',
@@ -65,24 +66,28 @@ export class InscriptionService {
       }
       inscription.departement = departement;
       
-      // Affectation automatique à une classe
-      inscription.classe = await this.assignerClasse(departement);
+      // Affectation automatique à une classe selon le niveau
+      inscription.classe = await this.assignerClasse(departement, inscription.niveau);
     }
     
     return this.inscriptionRepository.save(inscription);
   }
 
-  private async assignerClasse(departement: Departement): Promise<Classe> {
-    const prefix = this.departementPrefixes[departement.nom];
+  private async assignerClasse(departement: Departement, niveau: string): Promise<Classe> {
+    const deptName = departement.nom.trim();
+    const prefix = this.departementPrefixes[deptName] || 
+                   this.departementPrefixes[deptName.toLowerCase()] ||
+                   this.departementPrefixes[Object.keys(this.departementPrefixes).find(k => k.toLowerCase() === deptName.toLowerCase())];
+
     if (!prefix) {
       throw new NotFoundException(`Préfixe de classe non défini pour le département: ${departement.nom}`);
     }
 
-    // Récupérer toutes les classes du département avec le préfixe (1ère année)
+    // Récupérer toutes les classes du département pour ce niveau
     const classes = await this.classeRepository.find({
       where: { 
         departement: { id: departement.id },
-        niveau: '1ère année'
+        niveau: niveau
       },
       relations: ['inscriptions'],
       order: { nom: 'ASC' }
@@ -96,13 +101,15 @@ export class InscriptionService {
       }
     }
 
-    // Si toutes les classes sont pleines, créer une nouvelle classe
+    // Si toutes les classes sont pleines ou n'existent pas, créer une nouvelle classe
     const numeroClasse = classes.length + 1;
-    const nomClasse = `${prefix}1${numeroClasse}`;
+    // Déterminer le chiffre du niveau (1 pour 1ère année, 2 pour 2ème, etc.)
+    const chiffreNiveau = niveau.charAt(0); 
+    const nomClasse = `${prefix}${chiffreNiveau}${numeroClasse}`;
     
     const nouvelleClasse = this.classeRepository.create({
       nom: nomClasse,
-      niveau: '1ère année',
+      niveau: niveau,
       departement: departement
     });
     
@@ -147,6 +154,7 @@ async update(id: number, updateInscriptionDto: UpdateInscriptionDto): Promise<In
     
     const { departementId, ...rest } = updateInscriptionDto;
     
+    let departementChanged = false;
     if (departementId !== undefined) {
       if (departementId === null) {
         inscription.departement = null;
@@ -158,12 +166,19 @@ async update(id: number, updateInscriptionDto: UpdateInscriptionDto): Promise<In
           throw new NotFoundException(`Departement avec id ${departementIdNum} non trouvé`);
         }
         inscription.departement = departement;
-        // Réaffectation automatique à une classe du nouveau département
-        inscription.classe = await this.assignerClasse(departement);
+        departementChanged = true;
       }
     }
     
+    // Si le département ou le niveau a changé, on réassigne la classe
+    const niveauChanged = rest.niveau !== undefined && rest.niveau !== inscription.niveau;
+    
     Object.assign(inscription, rest);
+
+    if ((departementChanged || niveauChanged) && inscription.departement) {
+      inscription.classe = await this.assignerClasse(inscription.departement, inscription.niveau);
+    }
+    
     return this.inscriptionRepository.save(inscription);
   }
 

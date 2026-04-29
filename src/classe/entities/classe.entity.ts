@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, JoinColumn } from "typeorm";
+import { Column, Entity, ManyToOne, OneToMany, PrimaryGeneratedColumn, JoinColumn, ManyToMany } from "typeorm";
 
 @Entity("classe")
 export class Classe {
@@ -20,4 +20,10 @@ export class Classe {
 
     @OneToMany("Inscription", "classe")
     inscriptions: any[]
+
+    @ManyToMany("Matiere", "classes")
+    matieres: any[]
+
+    @OneToMany("RessourcPedagogique", "classe")
+    ressources: any[]
 }
