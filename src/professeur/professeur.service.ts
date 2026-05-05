@@ -53,7 +53,7 @@ export class ProfesseurService {
 
 
   async findOne(id: number): Promise<Professeur> {
-    const professeur = await this.professeurRepository.findOneBy({ id })
+    const professeur = await this.professeurRepository.findOne({ where: { id }, relations: ['matieres'] })
     if (!professeur) {
       throw new NotFoundException("professeur not found")
     }

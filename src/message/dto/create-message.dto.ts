@@ -2,25 +2,24 @@ import { Type } from "class-transformer";
 import { IsBoolean, IsDate, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class CreateMessageDto {
-
-
-
-    @IsNotEmpty ()
+    @IsNotEmpty()
     @IsString()
-    contenu:string
-@IsNotEmpty ()
+    contenu: string
+
+    @IsOptional()
     @IsDate()
-    @Type   (() => Date)
-dateEnvoi:Date
+    @Type(() => Date)
+    dateEnvoi?: Date
 
+    @IsOptional()
+    @IsBoolean()
+    lu?: boolean
 
-@IsNotEmpty ()
-@IsBoolean()
-lu:boolean
+    @IsNotEmpty()
+    @IsNumber()
+    senderId: number
 
-
-
-@IsNumber()
-@IsOptional()
-user:number
+    @IsNotEmpty()
+    @IsNumber()
+    receiverId: number
 }

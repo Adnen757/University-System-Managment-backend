@@ -21,7 +21,8 @@ export class EmploiDuTempsService {
     const query = this.emploiDuTempsRepository.createQueryBuilder('e')
       .leftJoinAndSelect('e.professeur', 'prof')
       .leftJoinAndSelect('e.matiere', 'mat')
-      .leftJoinAndSelect('e.salle', 'salle');
+      .leftJoinAndSelect('e.salle', 'salle')
+      .leftJoinAndSelect('e.classe', 'classe');
     if (departementId && classeId) {
       query.where('e.departementId = :departementId AND e.classeId = :classeId', { departementId, classeId });
     } else if (departementId) {
@@ -38,7 +39,7 @@ export class EmploiDuTempsService {
   async findOne(id: number): Promise<EmploiDuTemps> {
     const entry = await this.emploiDuTempsRepository.findOne({
       where: { id },
-      relations: ['professeur', 'matiere', 'salle'],
+      relations: ['professeur', 'matiere', 'salle', 'classe'],
     });
     if (!entry) {
       throw new NotFoundException('Emploi du temps non trouvé');

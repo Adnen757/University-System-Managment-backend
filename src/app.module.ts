@@ -29,14 +29,23 @@ import { InscriptionModule } from './inscription/inscription.module';
 import { ClasseModule } from './classe/classe.module';
 import { ChatbotModule } from './chatbot/chatbot.module';
 import { EmploiDuTempsModule } from './emploi-du-temps/emploi-du-temps.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
+import { StatsModule } from './stats/stats.module';
+
 @Module({
-  imports: [TypeOrmModule.forRoot({
+  imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'stockage'),
+      serveRoot: '/stockage',
+    }),
+    TypeOrmModule.forRoot({
     type: "postgres",
-    host: "localhost",
-    port: 5432,
+    host: process.env.DB_HOST || "localhost",
+    port: parseInt(process.env.DB_PORT) || 5432,
     username: "postgres",
     password: "1234",
-    database:"projet1",
+    database: "projet1",
     autoLoadEntities: true,
     entities: [__dirname + "/**/*.entity{.ts,.js}"
 
@@ -67,7 +76,7 @@ import { EmploiDuTempsModule } from './emploi-du-temps/emploi-du-temps.module';
       },
     }),
   
-  ConfigModule.forRoot({isGlobal:true}), DatabaseModule, UserModule, DepartementModule, EtudiantModule, ProfesseurModule, ChefDepartementModule, AnnonceModule, SalleModule, SeanceModule, AnneeUniversitaireModule, SemestreModule, PresenceModule, JustificatifAbsenceModule, MatiereModule, NoteModule, RessourcPedagogiquesModule, MessageModule, AdministrateurModule, AuthModule,SpecialiteModule ,EvaluationModule, InscriptionModule, ClasseModule, ChatbotModule, EmploiDuTempsModule],
+  ConfigModule.forRoot({isGlobal:true}), DatabaseModule, UserModule, DepartementModule, EtudiantModule, ProfesseurModule, ChefDepartementModule, AnnonceModule, SalleModule, SeanceModule, AnneeUniversitaireModule, SemestreModule, PresenceModule, JustificatifAbsenceModule, MatiereModule, NoteModule, RessourcPedagogiquesModule, MessageModule, AdministrateurModule, AuthModule,SpecialiteModule ,EvaluationModule, InscriptionModule, ClasseModule, ChatbotModule, EmploiDuTempsModule, StatsModule],
   controllers: [AppController],
   providers: [AppService],
 

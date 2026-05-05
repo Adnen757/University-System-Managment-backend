@@ -38,4 +38,5 @@ export class SeedService implements OnModuleInit {
       console.log('ℹ️ Default admin account already exists');
     }
   }
+
 }

@@ -11,13 +11,11 @@ export enum Type {
 export class CreateRessourcPedagogiqueDto {
 
     @IsNotEmpty()
+    @IsString()
+    titre: string;
+
+    @IsNotEmpty()
     type: Type;
-
-    
-
-
-
-
 
     @IsNotEmpty()
     @IsNumber()
@@ -31,6 +29,10 @@ export class CreateRessourcPedagogiqueDto {
     @IsNumber()
     matiereId: number;
 
+    @IsOptional()
+    @IsNumber()
+    classeId?: number;
+
     @IsNotEmpty()
     @IsString()
     proprietaire: string;
@@ -39,6 +41,7 @@ export class CreateRessourcPedagogiqueDto {
     @IsString()
     semestre: string;
 
-
-
+    @IsOptional()
+    @IsString()
+    lien?: string;
 }

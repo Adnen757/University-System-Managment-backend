@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from "t
 import { Professeur } from "src/professeur/entities/professeur.entity";
 import { Matiere } from "src/matiere/entities/matiere.entity";
 import { Salle } from "src/salle/entities/salle.entity";
+import { Classe } from "src/classe/entities/classe.entity";
 
 export enum JourSemaine {
   LUNDI = 'Lundi',
@@ -66,6 +67,10 @@ export class EmploiDuTemps {
 
   @Column({ nullable: true })
   classeId: number;
+
+  @ManyToOne(() => Classe, (classe) => classe.id, { onDelete: 'SET NULL', nullable: true })
+  @JoinColumn({ name: 'classeId' })
+  classe: Classe;
 
   @Column({ nullable: true })
   classNom: string;

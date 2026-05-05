@@ -5,27 +5,47 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Notification } from './entities/notification.entity';
 import { DeepPartial, Repository } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
+import { NotificationGateway } from './notification.gateway';
 
 @Injectable()
 export class NotificationService {
   constructor(
     @InjectRepository(Notification)
+    private readonly notificationRepository: Repository<Notification>,
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+    private readonly notificationGateway: NotificationGateway
+  ) { }
 
-     private readonly notificationRepository:Repository<Notification>,
-     @InjectRepository(User) private readonly userRepository:Repository<User>
-  ){
-
-  }
-
-
-  async create(createNotificationDto: CreateNotificationDto):Promise<Notification> {
-    const user = await this.userRepository.findOne({where:{id:createNotificationDto.user}, relations:["notifications"]})
-    if(!user){
+  async create(createNotificationDto: CreateNotificationDto): Promise<Notification> {
+    const user = await this.userRepository.findOne({ where: { id: createNotificationDto.user } })
+    if (!user) {
       throw new NotFoundException("user not found")
     }
-       const newnotification = await this.notificationRepository.create({...createNotificationDto,user})
-    return this.notificationRepository.save(newnotification)
+    const newnotification = await this.notificationRepository.create({ ...createNotificationDto, user })
+    const savedNotif = await this.notificationRepository.save(newnotification);
+
+    // Send real-time notification
+    this.notificationGateway.sendNotificationToUser(user.id, savedNotif);
+
+    return savedNotif;
+  }
+
+  async findByUser(userId: number): Promise<Notification[]> {
+    return this.notificationRepository.find({
+      where: { user: { id: userId } },
+      order: { date: 'DESC' }
+    });
+  }
+
+  async markAsRead(id: number): Promise<Notification> {
+    const notification = await this.notificationRepository.findOneBy({ id });
+    if (!notification) {
+      throw new NotFoundException("notification not found");
     }
+    notification.lu = true;
+    return this.notificationRepository.save(notification);
+  }
 
 
 

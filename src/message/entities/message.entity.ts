@@ -1,21 +1,23 @@
 import { User } from "src/user/entities/user.entity";
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+
 @Entity("Message")
 export class Message {
+  @PrimaryGeneratedColumn()
+  id: number
 
-@PrimaryGeneratedColumn()
- id:number
+  @Column()
+  contenu: string
 
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  dateEnvoi: Date
 
+  @Column({ default: false })
+  lu: boolean
 
- @Column()
- contenu:string 
-    @Column()   
-dateEnvoi:Date
+  @ManyToOne(() => User, { nullable: false, onDelete: 'CASCADE' })
+  sender: User
 
-@Column()
-lu:boolean
-
-
-
+  @ManyToOne(() => User, { nullable: false, onDelete: 'CASCADE' })
+  receiver: User
 }

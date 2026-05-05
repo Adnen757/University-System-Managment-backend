@@ -1,6 +1,7 @@
 import { Seance } from "src/seance/entities/seance.entity";
 import { User } from "src/user/entities/user.entity";
-import { ChildEntity, JoinColumn, ManyToOne, Column, PrimaryGeneratedColumn } from "typeorm";
+import { ChildEntity, JoinColumn, ManyToOne, ManyToMany, JoinTable, Column, PrimaryGeneratedColumn } from "typeorm";
+import { Matiere } from "src/matiere/entities/matiere.entity";
 
 @ChildEntity("Professeur")
 export class Professeur extends User {
@@ -11,6 +12,10 @@ export class Professeur extends User {
 
     @Column({ nullable: true })
     matiere: string
+
+    @ManyToMany(() => Matiere)
+    @JoinTable()
+    matieres: Matiere[];
 
     @ManyToOne("Departement", "professeurs", { onDelete: 'CASCADE' })
     @JoinColumn({ name: 'departementId' })

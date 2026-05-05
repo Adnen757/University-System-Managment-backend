@@ -53,6 +53,26 @@ message :"error data not found"+error.message
 
 
 
+  @Get('conversation/:userId1/:userId2')
+  async findConversation(
+    @Param('userId1', ParseIntPipe) userId1: number,
+    @Param('userId2', ParseIntPipe) userId2: number,
+    @Res() response
+  ) {
+    try {
+      const messages = await this.messageService.findConversation(userId1, userId2);
+      return response.status(HttpStatus.OK).json({
+        message: "Conversation retrieved",
+        data: messages
+      });
+    } catch (error) {
+      return response.status(HttpStatus.BAD_REQUEST).json({
+        statusCode: 400,
+        message: "Error retrieving conversation" + error.message
+      });
+    }
+  }
+
   @Get(':id')
  async findOne(@Param('id') id: number, @Res() response) {
         try {
