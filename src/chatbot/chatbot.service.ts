@@ -59,9 +59,9 @@ export class ChatbotService {
     for (const item of this.faqData.faq) {
       const itemQuestionLower = item.question.toLowerCase();
       const itemAnswerLower = item.answer.toLowerCase();
-      
+
       let score = 0;
-      
+
       // Vérifier les mots-clés
       for (const keyword of keywords) {
         if (itemQuestionLower.includes(keyword)) {
@@ -102,32 +102,32 @@ export class ChatbotService {
     // Si pas de réponse simple, essayer avec Python (mode IA)
     return new Promise((resolve) => {
       const scriptPath = join(__dirname, '..', '..', '..', 'chatbot', 'run_chat.py');
-      
+
       // Détecter la commande Python (python ou python3)
       const pythonCmd = process.platform === 'win32' ? 'python' : 'python3';
       const pythonProcess = spawn(pythonCmd, [scriptPath, question]);
-      
+
       let output = '';
       let errorOutput = '';
-      
+
       // Timeout de 15 secondes (plus court pour fallback rapide)
       const timeout = setTimeout(() => {
         pythonProcess.kill();
         console.log('Timeout Python, utilisation du mode FAQ');
         resolve(this.getDefaultResponse(question));
       }, 15000);
-      
+
       pythonProcess.stdout.on('data', (data) => {
         output += data.toString();
       });
-      
+
       pythonProcess.stderr.on('data', (data) => {
         errorOutput += data.toString();
       });
-      
+
       pythonProcess.on('close', (code) => {
         clearTimeout(timeout);
-        
+
         if (code !== 0) {
           console.error('Erreur Python:', errorOutput);
           // Fallback: réponse par défaut
@@ -136,7 +136,7 @@ export class ChatbotService {
           // Extraire la réponse de la sortie
           const lines = output.split('\n');
           const responseIndex = lines.findIndex(line => line.includes('Réponse :'));
-          
+
           if (responseIndex !== -1 && responseIndex + 1 < lines.length) {
             const answer = lines.slice(responseIndex + 1).join('\n').trim();
             resolve(answer);
@@ -145,7 +145,7 @@ export class ChatbotService {
           }
         }
       });
-      
+
       pythonProcess.on('error', (error) => {
         clearTimeout(timeout);
         console.error('Erreur process Python:', error);
@@ -166,17 +166,17 @@ export class ChatbotService {
   }
 
   async askAIProfesseur(question: string): Promise<string> {
-  try {
-    const response = await axios.post<FastAPIResponse>(
-      'http://127.0.0.1:8000/ask',
-      { question }
-    );
+    try {
+      const response = await axios.post<FastAPIResponse>(
+        'http://127.0.0.1:8000/ask',
+        { question }
+      );
 
-    return response.data.answer;
+      return response.data.answer;
 
-  } catch (error) {
-    console.error('Erreur FastAPI:', error);
-    return "Erreur lors de la communication avec l'IA";
+    } catch (error) {
+      console.error('Erreur FastAPI:', error);
+      return "Erreur lors de la communication avec l'IA";
+    }
   }
-}
 }

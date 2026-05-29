@@ -7,6 +7,7 @@ export enum NotificationType {
   PLANING = "PLANING",
   ANNONCE = "ANNONCE",
   MESSAGE = "MESSAGE",
+  COURS = "COURS",
 }
 
 @Entity()

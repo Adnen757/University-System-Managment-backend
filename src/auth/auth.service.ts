@@ -20,6 +20,9 @@ export class AuthService {
   async signup(createAuthDto: CreateAuthDto) {
     const { fullname, email, password, role } = createAuthDto;
 
+    // Normaliser le rôle pour la base de données
+    const dbRole = this.normalizeRoleToDb(role);
+
     // Vérifier si l'utilisateur existe déjà
     try {
       const existingUser = await this.userService.findByEmail(email);
@@ -38,9 +41,11 @@ export class AuthService {
       fullname,
       email,
       password,
-      role,
+      role: dbRole,
     });
 
+    // Retourner le rôle capitalisé pour le frontend
+    newUser.role = this.normalizeRoleToFrontend(newUser.role);
     return newUser;
   }
 
@@ -65,6 +70,9 @@ export class AuthService {
     if (!passwordMatches) throw new BadRequestException('password is incorrect');
     const tokens = await this.getTokens(user.id, user.email);
     await this.updateRefreshToken(user.id, tokens.refreshToken);
+
+    // Retourner le rôle capitalisé pour le frontend
+    user.role = this.normalizeRoleToFrontend(user.role);
     return { user, tokens };
   }
 
@@ -209,5 +217,25 @@ export class AuthService {
     } catch (error) {
       throw new UnauthorizedException(`Unvalid or expired token , ${error}`);
     }
+  }
+
+  private normalizeRoleToDb(role: string): string {
+    if (!role) return role;
+    const lower = role.toLowerCase();
+    if (lower === 'etudiant') return 'etudiant';
+    if (lower === 'administrateur' || lower === 'admin') return 'administrateur';
+    if (lower === 'professeur' || lower === 'enseignant') return 'professeur';
+    if (lower === 'chefdepartement' || lower === 'chef_departement') return 'chefDepartement';
+    return role;
+  }
+
+  private normalizeRoleToFrontend(role: string): string {
+    if (!role) return role;
+    const lower = role.toLowerCase();
+    if (lower === 'etudiant') return 'Etudiant';
+    if (lower === 'administrateur' || lower === 'admin') return 'Administrateur';
+    if (lower === 'professeur' || lower === 'enseignant') return 'Professeur';
+    if (lower === 'chefdepartement' || lower === 'chef_departement') return 'ChefDepartement';
+    return role;
   }
 }

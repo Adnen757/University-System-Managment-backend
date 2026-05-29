@@ -3,7 +3,7 @@ import { Presence } from "src/presence/entities/presence.entity"
 import { Specialite } from "src/specialite/entities/specialite.entity"
 import { User } from "src/user/entities/user.entity"
 import { ChildEntity, Column, OneToMany, OneToOne, PrimaryGeneratedColumn, JoinColumn, ManyToOne } from "typeorm"
-@ChildEntity("Etudiant")
+@ChildEntity("etudiant")
 
 export class Etudiant extends User {
     @PrimaryGeneratedColumn()

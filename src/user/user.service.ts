@@ -3,28 +3,38 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
+import { Etudiant } from 'src/etudiant/entities/etudiant.entity';
+import { Professeur } from 'src/professeur/entities/professeur.entity';
+import { ChefDepartement } from 'src/chef-departement/entities/chef-departement.entity';
+import { Administrateur } from 'src/administrateur/entities/administrateur.entity';
 import { Repository } from 'typeorm';
 import * as argon2 from 'argon2';
 @Injectable()
 export class UserService {
   constructor(
-    @InjectRepository(User) private userRepository:Repository<User>
-  ){
-
-  }
-
-
-
-
-
-
-
-
-
+    @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(Etudiant) private etudiantRepository: Repository<Etudiant>,
+    @InjectRepository(Professeur) private professeurRepository: Repository<Professeur>,
+    @InjectRepository(ChefDepartement) private chefDepartementRepository: Repository<ChefDepartement>,
+    @InjectRepository(Administrateur) private administrateurRepository: Repository<Administrateur>,
+  ) {}
 
   async create (createUserDto: CreateUserDto) :Promise<User> {
-   const newuser =await this.userRepository.create(createUserDto)
-   return this.userRepository.save(newuser)
+    const role = createUserDto.role ? createUserDto.role.toLowerCase() : '';
+
+    let repo: Repository<User> = this.userRepository;
+    if (role === 'etudiant') {
+      repo = this.etudiantRepository as any;
+    } else if (role === 'administrateur' || role === 'admin') {
+      repo = this.administrateurRepository as any;
+    } else if (role === 'professeur') {
+      repo = this.professeurRepository as any;
+    } else if (role === 'chefdepartement' || role === 'chef_departement') {
+      repo = this.chefDepartementRepository as any;
+    }
+
+    const newuser = await repo.create(createUserDto);
+    return repo.save(newuser);
   }
 
   async findAll() :Promise <User[]> {

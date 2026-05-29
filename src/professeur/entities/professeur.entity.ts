@@ -3,7 +3,7 @@ import { User } from "src/user/entities/user.entity";
 import { ChildEntity, JoinColumn, ManyToOne, ManyToMany, JoinTable, Column, PrimaryGeneratedColumn } from "typeorm";
 import { Matiere } from "src/matiere/entities/matiere.entity";
 
-@ChildEntity("Professeur")
+@ChildEntity("professeur")
 export class Professeur extends User {
     @PrimaryGeneratedColumn()
     id: number

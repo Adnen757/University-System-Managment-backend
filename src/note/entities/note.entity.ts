@@ -1,4 +1,5 @@
 import { Evaluation } from "src/evaluation/entities/evaluation.entity";
+import { Matiere } from "src/matiere/entities/matiere.entity";
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity("Note")
@@ -29,9 +30,27 @@ export class Note {
     @Column({ nullable: true })
     evaluationId: number
 
+    @ManyToOne(() => Matiere, { eager: true })
+    @JoinColumn({ name: 'matiereId' })
+    matiere: Matiere;
+
+    @Column({ nullable: true })
+    matiereId: number;
+
+    @Column({ nullable: true })
+    type: string
+
     @Column()
     semestre: string
 
+    @Column({ nullable: true })
+    professeurNom: string;
+
+    @Column({ nullable: true })
+    dateSaisie: string;
+
+    @Column({ nullable: true })
+    classeId: number;
 }
 
 

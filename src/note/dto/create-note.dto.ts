@@ -1,4 +1,4 @@
-import { IsBoolean, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IsBoolean, IsNotEmpty, IsNumber, IsString, IsOptional } from "class-validator";
 
 export class CreateNoteDto {
 
@@ -6,7 +6,7 @@ export class CreateNoteDto {
     @IsString()
     valeur: string
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsString()
     commentaire: string
 
@@ -19,12 +19,31 @@ export class CreateNoteDto {
     @IsNumber()
     etudiant: number
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsNumber()
     evaluation: number
+
+    @IsOptional()
+    @IsNumber()
+    matiereId: number
+
+    @IsOptional()
+    @IsString()
+    type: string
 
     @IsNotEmpty()
     @IsString()
     semestre: string
 
+    @IsOptional()
+    @IsString()
+    professeurNom: string;
+
+    @IsOptional()
+    @IsString()
+    dateSaisie: string;
+
+    @IsOptional()
+    @IsNumber()
+    classeId: number;
 }

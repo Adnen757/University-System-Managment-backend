@@ -1,7 +1,7 @@
 import { User } from "src/user/entities/user.entity";
 import { ChildEntity, JoinColumn, OneToOne, Column } from "typeorm";
 
-@ChildEntity("ChefDepartement")
+@ChildEntity("chefDepartement")
 export class ChefDepartement extends User {
 
     @OneToOne("Departement", "chefDepartement", { onDelete: 'CASCADE' })

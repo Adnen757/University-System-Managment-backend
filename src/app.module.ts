@@ -32,6 +32,9 @@ import { EmploiDuTempsModule } from './emploi-du-temps/emploi-du-temps.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { StatsModule } from './stats/stats.module';
+import { EtudiantImportModule } from './etudiant-import/etudiant-import.module';
+import { ActivityModule } from './activity/activity.module';
+import { ResultatsModule } from './resultats/resultats.module';
 
 @Module({
   imports: [
@@ -76,7 +79,7 @@ import { StatsModule } from './stats/stats.module';
       },
     }),
   
-  ConfigModule.forRoot({isGlobal:true}), DatabaseModule, UserModule, DepartementModule, EtudiantModule, ProfesseurModule, ChefDepartementModule, AnnonceModule, SalleModule, SeanceModule, AnneeUniversitaireModule, SemestreModule, PresenceModule, JustificatifAbsenceModule, MatiereModule, NoteModule, RessourcPedagogiquesModule, MessageModule, AdministrateurModule, AuthModule,SpecialiteModule ,EvaluationModule, InscriptionModule, ClasseModule, ChatbotModule, EmploiDuTempsModule, StatsModule],
+  ConfigModule.forRoot({isGlobal:true}), DatabaseModule, UserModule, DepartementModule, EtudiantModule, ProfesseurModule, ChefDepartementModule, AnnonceModule, SalleModule, SeanceModule, AnneeUniversitaireModule, SemestreModule, PresenceModule, JustificatifAbsenceModule, MatiereModule, NoteModule, RessourcPedagogiquesModule, MessageModule, AdministrateurModule, AuthModule,SpecialiteModule ,EvaluationModule, InscriptionModule, ClasseModule, ChatbotModule, EmploiDuTempsModule, StatsModule, EtudiantImportModule, ActivityModule, ResultatsModule],
   controllers: [AppController],
   providers: [AppService],
 

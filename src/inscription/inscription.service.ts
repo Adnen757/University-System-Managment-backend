@@ -15,10 +15,29 @@ export class InscriptionService {
   private readonly departementPrefixes: { [key: string]: string } = {
     'informatique': 'TI',
     'Informatique': 'TI',
+    "Technologie d'informatique": 'TI',
+    "technologie d'informatique": 'TI',
+    "Technologies de l'informatique": 'TI',
+    'Technologie Informatique': 'TI',
+    'technologie informatique': 'TI',
     'Génie Mécanique': 'GM',
     'Génie Électrique': 'GE',
     'Génie des Procédés': 'GP'
   };
+
+  private getPrefixForDept(nomDept: string): string | undefined {
+    const nom = nomDept.trim();
+    if (this.departementPrefixes[nom]) return this.departementPrefixes[nom];
+    const nomLower = nom.toLowerCase();
+    const key = Object.keys(this.departementPrefixes).find(k => k.toLowerCase() === nomLower);
+    if (key) return this.departementPrefixes[key];
+    // Fallback partiel
+    if (nomLower.includes('info')) return 'TI';
+    if (nomLower.includes('meca') || nomLower.includes('méca')) return 'GM';
+    if (nomLower.includes('elec') || nomLower.includes('élec')) return 'GE';
+    if (nomLower.includes('proce') || nomLower.includes('procé')) return 'GP';
+    return undefined;
+  }
 
   constructor(
     @InjectRepository(Inscription) private inscriptionRepository: Repository<Inscription>,
@@ -32,7 +51,7 @@ export class InscriptionService {
 
 
 
- async create(createInscriptionDto: CreateInscriptionDto, photos?: string[]):Promise<Inscription> {
+  async create(createInscriptionDto: CreateInscriptionDto):Promise<Inscription> {
     const { departementId, userId, cin, matricule_bac, matriculeBac, ...rest } = createInscriptionDto;
     const matriculeBacValue = matricule_bac ?? matriculeBac;
     
@@ -53,11 +72,6 @@ export class InscriptionService {
       inscription.user = user;
     }
     
-    // Ajouter les photos si fournies
-    if (photos && photos.length > 0) {
-      inscription.photos = photos;
-    }
-    
     if (departementId) {
       const departementIdNum = typeof departementId === 'string' ? parseInt(departementId) : departementId;
       const departement = await this.departementRepository.findOneBy({ id: departementIdNum });
@@ -74,10 +88,7 @@ export class InscriptionService {
   }
 
   private async assignerClasse(departement: Departement, niveau: string): Promise<Classe> {
-    const deptName = departement.nom.trim();
-    const prefix = this.departementPrefixes[deptName] || 
-                   this.departementPrefixes[deptName.toLowerCase()] ||
-                   this.departementPrefixes[Object.keys(this.departementPrefixes).find(k => k.toLowerCase() === deptName.toLowerCase())];
+    const prefix = this.getPrefixForDept(departement.nom);
 
     if (!prefix) {
       throw new NotFoundException(`Préfixe de classe non défini pour le département: ${departement.nom}`);
@@ -152,7 +163,7 @@ async update(id: number, updateInscriptionDto: UpdateInscriptionDto): Promise<In
       throw new NotFoundException("inscription not found");
     }
     
-    const { departementId, ...rest } = updateInscriptionDto;
+    const { departementId, classeId, ...rest } = updateInscriptionDto;
     
     let departementChanged = false;
     if (departementId !== undefined) {
@@ -169,13 +180,28 @@ async update(id: number, updateInscriptionDto: UpdateInscriptionDto): Promise<In
         departementChanged = true;
       }
     }
+
+    let classeChangedManually = false;
+    if (classeId !== undefined) {
+      if (classeId === null) {
+        inscription.classe = null;
+      } else {
+        const classToAssign = await this.classeRepository.findOneBy({ id: typeof classeId === 'string' ? parseInt(classeId) : classeId });
+        if (!classToAssign) {
+          throw new NotFoundException(`Classe avec id ${classeId} non trouvée`);
+        }
+        inscription.classe = classToAssign;
+        inscription.niveau = classToAssign.niveau;
+        classeChangedManually = true;
+      }
+    }
     
-    // Si le département ou le niveau a changé, on réassigne la classe
+    // Si le département ou le niveau a changé, on réassigne la classe (sauf si on a forcé une classe manuellement)
     const niveauChanged = rest.niveau !== undefined && rest.niveau !== inscription.niveau;
     
     Object.assign(inscription, rest);
 
-    if ((departementChanged || niveauChanged) && inscription.departement) {
+    if (!classeChangedManually && (departementChanged || niveauChanged) && inscription.departement) {
       inscription.classe = await this.assignerClasse(inscription.departement, inscription.niveau);
     }
     

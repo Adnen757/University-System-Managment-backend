@@ -25,12 +25,7 @@ export class EvaluationService {
 
 
   async findAll(): Promise<Evaluation[]> {
-    const evaluations = await this.evaluationRepository.find()
-    if (evaluations.length === 0) {
-      throw new NotFoundException("data not found")
-    }
-    return evaluations
-
+    return await this.evaluationRepository.find();
   }
 
   async findOne(id: number): Promise<Evaluation> {

@@ -6,6 +6,9 @@ import { DeepPartial, Repository } from 'typeorm';
 import { RessourcPedagogique } from './entities/ressourc-pedagogique.entity';
 import { Matiere } from 'src/matiere/entities/matiere.entity';
 import { Classe } from 'src/classe/entities/classe.entity';
+import { Inscription } from 'src/inscription/entities/inscription.entity';
+import { NotificationService } from 'src/notification/notification.service';
+import { NotificationType } from 'src/notification/entities/notification.entity';
 
 @Injectable()
 export class RessourcPedagogiquesService {
@@ -13,7 +16,9 @@ export class RessourcPedagogiquesService {
   constructor(
     @InjectRepository(RessourcPedagogique) private ressourcPedagogiqueRepository: Repository<RessourcPedagogique>,
     @InjectRepository(Matiere) private matiereRepository: Repository<Matiere>,
-    @InjectRepository(Classe) private classeRepository: Repository<Classe>
+    @InjectRepository(Classe) private classeRepository: Repository<Classe>,
+    @InjectRepository(Inscription) private inscriptionRepository: Repository<Inscription>,
+    private readonly notificationService: NotificationService
   ) { }
 
 
@@ -37,7 +42,32 @@ export class RessourcPedagogiquesService {
       matiere: matiere,
       classe: classe
     })
-    return this.ressourcPedagogiqueRepository.save(newressource)
+    const savedRessource = await this.ressourcPedagogiqueRepository.save(newressource);
+
+    // Send notification to all students in the class
+    if (classe) {
+      try {
+        const inscriptions = await this.inscriptionRepository.find({ 
+          where: { classe: { id: classe.id } },
+          relations: ['user']
+        });
+        
+        for (const insc of inscriptions) {
+          if (insc.user) {
+            await this.notificationService.create({
+              titre: "Nouveau cours ajouté",
+              message: `Un nouveau document (${savedRessource.type}) a été ajouté dans la matière ${matiere.intitule} par ${savedRessource.proprietaire}.`,
+              type: NotificationType.COURS,
+              user: insc.user.id
+            });
+          }
+        }
+      } catch (e) {
+        console.error('Erreur lors de la notification (create ressource):', e);
+      }
+    }
+
+    return savedRessource;
   }
 
 

@@ -3,7 +3,7 @@ import { ProfesseurService } from './professeur.service';
 import { CreateProfesseurDto } from './dto/create-professeur.dto';
 import { UpdateProfesseurDto } from './dto/update-professeur.dto';
 
-@Controller('professeur')
+@Controller(['professeur', 'enseignant'])
 export class ProfesseurController {
   constructor(private readonly professeurService: ProfesseurService) {}
 
@@ -15,7 +15,10 @@ export class ProfesseurController {
  try {
          const newprofesseur=await this.professeurService.create(createProfesseurDto)
          return response.status(HttpStatus.CREATED).json({
-           message:"professeur create avec succes",newprofesseur
+           message:"professeur create avec succes",
+           newprofesseur,
+           professeur: newprofesseur,
+           enseignant: newprofesseur
          })
        } catch (error) {
         const status = error instanceof NotFoundException ? HttpStatus.NOT_FOUND : HttpStatus.BAD_REQUEST;
@@ -36,7 +39,9 @@ export class ProfesseurController {
   try {
       const professeur=await this.professeurService.findAll()
       return response.status(HttpStatus.OK).json({
-        message:"this all professeur ",professeur
+        message:"this all professeur ",
+        professeur,
+        enseignant: professeur
       })
       
     } catch (error) {
@@ -57,7 +62,9 @@ export class ProfesseurController {
  try {
     const professeur=await this.professeurService.findOne(id)
     return response.status(HttpStatus.OK).json({
-        message:"this all professeur ",professeur
+        message:"this all professeur ",
+        professeur,
+        enseignant: professeur
       })
     
    } catch (error) {
@@ -78,7 +85,9 @@ export class ProfesseurController {
   try {
     const professeur=await this.professeurService.update(id,updateProfesseurDto)
     return response.status(HttpStatus.OK).json({
-        message:" professeur update avec succsefly",professeur
+        message:" professeur update avec succsefly",
+        professeur,
+        enseignant: professeur
       })
     
    } catch (error) {
@@ -99,7 +108,9 @@ export class ProfesseurController {
      try {
     const professeur=await this.professeurService.remove(id)
     return response.status(HttpStatus.OK).json({
-        message:" professeur remove avec succsefly",professeur
+        message:" professeur remove avec succsefly",
+        professeur,
+        enseignant: professeur
       })
     
    } catch (error) {

@@ -26,7 +26,4 @@ export class Inscription {
     @ManyToOne("User", "inscriptions", { onDelete: "CASCADE" })
     @JoinColumn({ name: "user_id" })
     user: any
-
-    @Column("simple-array", { nullable: true })
-    photos: string[]
 }

@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, MaxLength } from 'class-validator';
+import { IsNotEmpty, IsString, MaxLength, IsOptional } from 'class-validator';
 
 export class CreateDepartementDto {
   // BUG FIX: @IsNotEmpty() was missing — empty string passed validation silently
@@ -14,4 +14,8 @@ export class CreateDepartementDto {
   @IsNotEmpty({ message: 'La description est requise' })
   @IsString()
   description: string;
+
+  @IsOptional()
+  @IsString()
+  dateLimiteNote?: string;
 }

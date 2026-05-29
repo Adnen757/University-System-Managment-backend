@@ -15,6 +15,9 @@ export class Departement {
     @Column()
     description: string
 
+    @Column({ type: 'timestamp', nullable: true })
+    dateLimiteNote: Date;
+
     @OneToMany("Specialite", "departement", { cascade: true, onDelete: 'CASCADE' })
     specialites: any[]
 
